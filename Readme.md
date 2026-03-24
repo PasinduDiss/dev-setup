@@ -5,4 +5,4 @@
 - NeoVim
 - Aerospace - tiling window manager
 
-Todo: Add scripts to authenticate with aws for multi account (maybe via sso)
+Todo: Add scripts to authenticate with aws for multi account
