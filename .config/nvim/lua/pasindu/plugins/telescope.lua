@@ -31,18 +31,38 @@ return {
 					i = {
 						["<C-k>"] = actions.move_selection_previous, -- move to prev result
 						["<C-j>"] = actions.move_selection_next, -- move to next result
-						["<C-q>"] = actions.send_selected_to_qflist + custom_actions.open_trouble_qflist,
+						["<C-q>"] = actions.send_to_qflist,
 						["<C-t>"] = trouble_telescope.open,
+						["<C-a>"] = actions.toggle_all,
 					},
 				},
 			},
 			extensions = {
 				project = {
-					base_dirs = { "~/code/projects/", "~/code/learning/" }, -- Add paths to your project directories
-					hidden_files = false, -- Show hidden files when browsing projects
-					theme = "dropdown", -- Set picker theme
+					base_dirs = { "~/code/zendesk/", "~/.config/" },
+					hidden_files = false,
+					theme = "dropdown",
+					on_project_selected = function(prompt_bufnr)
+						local actions_state = require("telescope.actions.state")
+						local actions = require("telescope.actions")
+						local selected = actions_state.get_selected_entry()
+						actions.close(prompt_bufnr)
+						if selected and selected.value then
+							local path = vim.fn.expand(selected.value)
+							vim.api.nvim_set_current_dir(path)
+							require("telescope.builtin").find_files()
+						end
+					end,
 				},
 			},
+      pickers = {
+        find_files = {
+          hidden = true,
+        },
+        live_grep = {
+          additional_args = { "--hidden" },
+        },
+      },
 		})
 
 		telescope.load_extension("fzf")
@@ -56,6 +76,7 @@ return {
 		keymap.set("n", "<leader>fr", "<cmd>Telescope oldfiles<cr>", { desc = "Fuzzy find recent files" })
 		keymap.set("n", "<leader>fs", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
 		keymap.set("n", "<leader>fc", "<cmd>Telescope grep_string<cr>", { desc = "Find string under cursor in cwd" })
+		keymap.set("n", "<leader>fu", "<cmd>Telescope buffers<cr>", { desc = "Buffer slector (for navigating Tabs)" })
 		keymap.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
 	end,
 }

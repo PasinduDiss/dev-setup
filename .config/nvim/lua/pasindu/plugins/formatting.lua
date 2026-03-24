@@ -21,13 +21,14 @@ return {
 				lua = { "stylua" },
 				python = { "isort", "ruff" },
 				sql = { "sqlfmt" },
+				golang = { "gofmt" },
 			},
-			format_on_save = {
-				lsp_fallback = true,
-				async = false,
-				timeout_ms = 5000,
-				lsp_format = "fallback",
-			},
+			-- format_on_save = {
+			-- 	lsp_fallback = true,
+			-- 	async = false,
+			-- 	timeout_ms = 5000,
+			-- 	lsp_format = "fallback",
+			-- },
 		})
 
 		vim.keymap.set({ "n", "v" }, "<leader>mp", function()

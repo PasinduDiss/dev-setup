@@ -31,3 +31,6 @@ opt.backspace = "indent,eol,start" -- allow backspace on indent, end of line or 
 -- clipboard
 opt.clipboard:append("unnamedplus") -- split vertical widnow to the right
 opt.splitbelow = true -- split horizontal widow to the bottom
+
+-- undo after close
+opt.undofile = true
