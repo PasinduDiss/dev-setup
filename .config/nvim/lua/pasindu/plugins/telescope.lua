@@ -39,7 +39,7 @@ return {
 			},
 			extensions = {
 				project = {
-					base_dirs = { "~/code/zendesk/", "~/.config/" },
+					base_dirs = { "~/code/", "~/.config/" },
 					hidden_files = false,
 					theme = "dropdown",
 					on_project_selected = function(prompt_bufnr)

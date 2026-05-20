@@ -4,41 +4,56 @@ return {
 	config = function()
 		require("toggleterm").setup({
 			size = 20,
-			open_mapping = [[<C-\\>]], -- This is the key mapping for toggling the terminal
-			hide_numbers = true, -- Hide number column in terminal buffer
+			hide_numbers = true,
 			shade_filetypes = {},
 			start_in_insert = true,
-			insert_mappings = true, -- Allow mappings in insert mode
-			terminal_mappings = true, -- Use mappings in terminal mode
+			insert_mappings = true,
+			terminal_mappings = true,
 			persist_size = true,
-			direction = "float", -- Options: 'vertical' | 'horizontal' | 'tab' | 'float'
+			direction = "float",
 			float_opts = {
-				border = "curved", -- Border style: 'single', 'double', 'shadow', 'curved'
-				winblend = 0, -- Transparency level (0 = opaque, 100 = fully transparent)
+				border = "curved",
+				winblend = 0,
 				highlights = {
-					border = "Normal", -- Highlight group for the border
-					background = "TermNormal", -- Highlight group for the background
+					border = "Normal",
+					background = "TermNormal",
 				},
 			},
-			shade_terminals = false, -- Shades the background of the terminal
-			shading_factor = 2, -- Degree of shading for the terminal
-			close_on_exit = true, -- Automatically close the terminal when the process exits
-			shell = vim.o.shell, -- Use the default shell
+			shade_terminals = false,
+			shading_factor = 2,
+			close_on_exit = true,
+			shell = vim.o.shell,
+		})
+
+		local Terminal = require("toggleterm.terminal").Terminal
+
+		local tmux_term = Terminal:new({
+			-- Create a named tmux session with zsh/lazygit/btop windows on first open;
+			-- subsequent opens re-attach to the existing session.
+			cmd = [[zsh -c 'SESSION=nvim-term; if ! tmux has-session -t "$SESSION" 2>/dev/null; then tmux new-session -d -s "$SESSION" -n zsh && tmux new-window -t "$SESSION" -n lazygit lazygit && tmux new-window -t "$SESSION" -n btop btop && tmux select-window -t "$SESSION:zsh"; fi; exec tmux attach-session -t "$SESSION"']],
+			direction = "float",
+			float_opts = {
+				border = "curved",
+				winblend = 0,
+				highlights = {
+					border = "Normal",
+					background = "TermNormal",
+				},
+			},
+			close_on_exit = true,
+			on_open = function(_)
+				vim.cmd("startinsert!")
+			end,
 		})
 
 		local keymap = vim.keymap
 
-		keymap.set("n", "<C-;>", "<Cmd>ToggleTerm<CR>", {
+		keymap.set({ "n", "t" }, "<C-;>", function()
+			tmux_term:toggle()
+		end, {
 			noremap = true,
 			silent = true,
-			desc = "Toggle terminal (open/close)",
-		})
-
-		-- Toggle terminal with <C-\> in terminal mode
-		keymap.set("t", "<C-;>", "<Cmd>ToggleTerm<CR>", {
-			noremap = true,
-			silent = true,
-			desc = "Toggle terminal from inside the terminal",
+			desc = "Toggle tmux terminal (zsh / lazygit / btop)",
 		})
 	end,
 }
